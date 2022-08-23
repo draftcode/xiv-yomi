@@ -15,17 +15,20 @@ const stripHalfWrittenKana = (s: string): string => {
     return s
 }
 
-const containsAll = (arg: string, terms: [string, string][]): boolean => {
-    arg = arg.toLowerCase()
+const containsAll = (args: string[], terms: [string, string][]): boolean => {
     for (let [orig, converted] of terms) {
-        if (!arg.includes(orig) && !arg.includes(converted)) {
+        const included = args.some(arg => {
+            arg = arg.toLowerCase()
+            return arg.includes(orig) || arg.includes(converted)
+        })
+        if (!included) {
             return false
         }
     }
     return true
 }
 
-export const createFuzzyMatcher = (searchValue: string): (arg: string) => boolean => {
+export const createFuzzyMatcher = (searchValue: string): (args: string[]) => boolean => {
     const terms: [string, string][] = searchValue
         .toLowerCase()
         .split(' ')
@@ -33,5 +36,5 @@ export const createFuzzyMatcher = (searchValue: string): (arg: string) => boolea
             term,
             stripHalfWrittenKana(toHiragana(term, { convertLongVowelMark: false })),
         ])
-    return (arg: string) => containsAll(arg, terms)
+    return (args: string[]) => containsAll(args, terms)
 }

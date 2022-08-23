@@ -37,7 +37,7 @@ const Home: NextPage = () => {
     let shownItems = items;
     if (searchValue != '') {
         const matcher = createFuzzyMatcher(searchValue)
-        shownItems = shownItems.filter(item => item.yomi.some(matcher))
+        shownItems = shownItems.filter(item => matcher([item.name].concat(item.yomi)))
     }
     return (
         <>
